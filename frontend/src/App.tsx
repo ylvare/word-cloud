@@ -7,8 +7,12 @@ export function App() {
   const [html, setHtml] = useState("");
 
   useEffect(() => {
-    fetch("/api/challenge")
-      .then((r) => r.text())
+    fetch("api/textfile?filename=Ylva-Rehnberg_CV.txt")
+      .then((r) => {
+        console.log("in fetch!");
+        console.log(r);
+        return r.text();
+      })
       .then(setHtml)
       .catch(setError)
       .finally(() => setIsLoading(false));

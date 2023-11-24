@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "build",
+		"type": "shell",
+		"command": "tsc --outDir dist", 
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		},
+		"presentation": {
+		  "reveal": "always",
+		  "panel": "shared"
+		},
+		"problemMatcher": "$tsc"
+	  },
+	  {
+		"label": "clean",
+		"type": "shell",
+		"command": "rm -rf dist",
+		"presentation": {
+		  "reveal": "always",
+		  "panel": "shared"
+		}
+	  }
+	]
+  }

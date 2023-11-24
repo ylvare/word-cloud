@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "noEmit": true,
     "target": "esnext",
     "module": "nodenext",
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "outDir": "dist"
   }
 }
