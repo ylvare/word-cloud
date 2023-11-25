@@ -15,6 +15,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "marked": "^7.0.4"
+    "marked": "^7.0.4",
+    "rss-parser": "^3.13.0"
   }
 }
