@@ -1,13 +1,12 @@
-// postController.ts
 import { Request, Response } from 'express';
 import { fetchRssFeed } from '../services/rssService.js';
 
 async function getPostsFromRssFeedUrl(req: Request, res: Response): Promise<void> {
   try {
-    const rssFeedUrl: string = req.body.rssFeedUrl; // Assuming the URL is sent in the request body
+    const rssFeedUrl: string = req.query.rssFeedUrl as string;
 
     if (!rssFeedUrl) {
-      res.status(400).json({ error: 'RSS feed URL is required' });
+      res.status(400).json({ error: 'Missing RSS feed URL in the query parameters' });
       return;
     }
 
@@ -16,6 +15,7 @@ async function getPostsFromRssFeedUrl(req: Request, res: Response): Promise<void
     res.json(rssFeed);
   } catch (error) {
     // Handle errors
+    console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
