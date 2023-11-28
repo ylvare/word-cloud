@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "devDependencies": {
+    "@types/lodash": "^4.14.202",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^4.0.4",

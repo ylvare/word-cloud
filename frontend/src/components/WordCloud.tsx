@@ -2,21 +2,16 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import cloud, { Word } from "d3-cloud";
-import { generateCloudData } from "../utils/cloudData";
 import "../styles/tailwind.css";
-
-interface RawWordData {
-  word: string;
-  frequency: number;
-}
-
-interface WordCloudProps {
-  rawData: RawWordData[];
-}
+import { generateInputArray } from "../utils/inputArray";
 
 interface CloudWordInput {
   text: string;
   size: number;
+}
+
+interface WordCloudProps {
+  wordCloudData: CloudWordInput[];
 }
 
 interface CloudWord extends Word {
@@ -27,14 +22,22 @@ interface CloudWord extends Word {
   rotate: any;
 }
 
-const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
+const WordCloud: React.FC<WordCloudProps> = ({ wordCloudData }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
+  console.log("WordCloudData:", wordCloudData);
+  console.log("WordCloudData:", wordCloudData.length);
+
   useEffect(() => {
-    const cloudData: CloudWordInput[] = generateCloudData(rawData);
+    const cleanupPreviousSvg = () => {
+      const svgElement = d3.select<SVGSVGElement, unknown>(svgRef.current!);
+      svgElement.selectAll("*").remove();
+    };
+
+    cleanupPreviousSvg();
 
     const layout = cloud<CloudWordInput>()
-      .words(cloudData)
+      .words(wordCloudData.length > 0 ? wordCloudData : generateInputArray())
       .size([500, 300])
       .padding(1)
       .rotate(() => 0)
@@ -91,11 +94,7 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
         .style("font-size", (d) => `${d.size}px`)
         .attr("class", "opacity-100");
     }
-    return () => {
-      // Perform cleanup tasks here
-      // This function will be called when the component unmounts or when the dependencies change
-    };
-  }, [rawData]);
+  }, [wordCloudData]);
 
   return <svg ref={svgRef}></svg>;
 };

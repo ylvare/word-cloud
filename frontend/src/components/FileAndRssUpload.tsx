@@ -6,7 +6,18 @@ enum UploadOption {
   RSS,
 }
 
-const FileAndRssUpload: React.FC = () => {
+interface CloudWordInput {
+  text: string;
+  size: number;
+}
+
+interface FileAndRssUploadProps {
+  onUploadSuccess: (newData: CloudWordInput[]) => void;
+}
+
+const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
+  onUploadSuccess,
+}) => {
   const [uploadOption, setUploadOption] = useState<UploadOption>(
     UploadOption.File
   );
@@ -23,7 +34,6 @@ const FileAndRssUpload: React.FC = () => {
       if (uploadOption === UploadOption.File && file) {
         const content = await file.text();
 
-        // Create an object with a 'content' field to match the server's expectation
         const requestBody = { content };
 
         const response = await axios.post("/api/textfile", requestBody, {
@@ -34,6 +44,12 @@ const FileAndRssUpload: React.FC = () => {
 
         if (response.status === 200) {
           console.log("File uploaded successfully");
+          const cloudDataResponse = await axios.get("/api/clouddata");
+          if (cloudDataResponse.status === 200) {
+            onUploadSuccess(cloudDataResponse.data.cloudData);
+          } else {
+            console.error("Failed to retrieve updated word cloud data");
+          }
         } else {
           console.error("Failed to upload file");
         }
