@@ -3,7 +3,6 @@ import React from "react";
 import WordCloud from "./components/WordCloud";
 
 const App: React.FC = () => {
-  // Assuming you have some raw data to pass to the WordCloud component
   const rawData = [
     { word: "example", frequency: 10 },
     { word: "cloud", frequency: 8 },

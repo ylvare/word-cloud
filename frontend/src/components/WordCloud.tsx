@@ -13,12 +13,12 @@ interface WordCloudProps {
   rawData: RawWordData[];
 }
 
-interface CloudWord {
+interface CloudWordInput {
   text: string;
   size: number;
 }
 
-interface LayoutWord extends Word {
+interface CloudWord extends Word {
   text: string;
   size: number;
   x: any;
@@ -30,71 +30,67 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
-    const cloudData: CloudWord[] = generateCloudData(rawData);
+    const cloudData: CloudWordInput[] = generateCloudData(rawData);
 
-    const layout = cloud<CloudWord>()
-      //.size([1000, 1000])
+    const layout = cloud<CloudWordInput>()
       .words(cloudData)
       .padding(1)
-      //.rotate(() => (Math.random() > 0.5 ? 0 : 90))
       .rotate(() => 0)
       .font("Impact")
       .fontSize((d) => d.size)
-      // .random(() => 100) // Set a fixed seed value
       .on("end", draw);
 
     layout.start();
 
-    function draw(words: LayoutWord[]) {
+    function draw(words: CloudWord[]) {
       const minX = d3.min(words, (d) => d.x);
       const minY = d3.min(words, (d) => d.y);
       const maxX = d3.max(words, (d) => d.x);
       const maxY = d3.max(words, (d) => d.y);
 
-      //const svgWidth = maxX - minX + margin.left + margin.right;
-      //const svgHeight = maxY - minY + margin.top + margin.bottom;
-
-      const margin = 200;
-
-      const svgWidth = maxX - minX + 2 * margin;
-      const svgHeight = maxY - minY + 2 * margin;
+      const svgWidth = maxX - minX + 30;
+      const svgHeight = maxY - minY + 30;
 
       const svg = d3
         .select<SVGSVGElement, unknown>(svgRef.current!)
         .attr("width", svgWidth)
         .attr("height", svgHeight);
       console.log(words);
-      //const svg = d3.select<SVGSVGElement, unknown>(svgRef.current!);
 
-      // Purple fill color
+      console.log("SVG Dimensions:", svgWidth, "x", svgHeight);
+      console.log("SVG Element:", svg.node());
+
       const fill = () => "purple";
 
-      const text = svg.selectAll<SVGTextElement, CloudWord>("text").data(words);
-
-      text
+      const text = svg
+        .selectAll<SVGTextElement, CloudWordInput>("text")
+        .data(words)
         .enter()
         .append("text")
         .style("font-size", (d) => `${d.size}px`)
         .attr("text-anchor", "middle")
+        .style("fill", fill)
         .attr(
           "transform",
           (d) =>
-            `translate(${d.x - minX + 100},${d.y - minY + 100})rotate(${
+            `translate(${svgWidth / 2},${svgHeight / 2})rotate(${d.rotate})`
+        )
+        .transition()
+        .duration(700);
+      text
+        .attr(
+          "transform",
+          (d) =>
+            `translate(${d.x - minX + 20},${d.y - minY + 20})rotate(${
               d.rotate
             })`
         )
-        .style("fill", fill)
         .text((d) => d.text);
-
-      // text
-      //   .transition()
-      //   .duration(1000)
-      //   .style("font-size", (d) => `${d.size}px`)
-      //   .attr("transform", (d) => `translate(${d.x},${d.y})rotate(${d.rotate})`)
-      //   .style("fill", fill);
-
-      text.exit().remove();
     }
+    return () => {
+      // Perform cleanup tasks here
+      // This function will be called when the component unmounts or when the dependencies change
+    };
   }, [rawData]);
 
   return (
