@@ -7,19 +7,34 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^4.0.4",
+    "postcss-cli": "^10.1.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.9"
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
     "@types/d3-cloud": "^1.2.9",
+    "autoprefixer": "^10.4.16",
     "d3": "^7.8.5",
     "d3-cloud": "^1.2.7",
+    "dependency-graph": "^0.11.0",
+    "fs-extra": "^11.2.0",
+    "get-stdin": "^9.0.0",
+    "globby": "^14.0.0",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^10.1.0",
+    "postcss-reporter": "^7.0.5",
+    "pretty-hrtime": "^1.0.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "slash": "^5.1.0",
+    "tailwindcss": "^3.3.5"
   },
   "scripts": {
     "dev": "vite",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "build:css": "postcss src/styles/tailwind.css -o public/styles/tailwind.css",
+    "watch:css": "postcss src/styles/tailwind.css -o public/styles/tailwind.css --watch",
+    "build": "yarn build:css"
   }
 }

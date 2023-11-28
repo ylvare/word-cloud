@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import cloud, { Word } from "d3-cloud";
 import { generateCloudData } from "../utils/cloudData";
+import "../styles/tailwind.css";
 
 interface RawWordData {
   word: string;
@@ -34,6 +35,7 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
 
     const layout = cloud<CloudWordInput>()
       .words(cloudData)
+      .size([500, 300])
       .padding(1)
       .rotate(() => 0)
       .font("Impact")
@@ -48,14 +50,14 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
       const maxX = d3.max(words, (d) => d.x);
       const maxY = d3.max(words, (d) => d.y);
 
-      const padding = 20;
+      const padding = 40;
       const viewBoxWidth = maxX - minX + 2 * padding;
       const viewBoxHeight = maxY - minY + 2 * padding;
 
       const svg = d3
         .select<SVGSVGElement, unknown>(svgRef.current!)
-        .attr("width", "100%") // Use 100% width for responsiveness
-        .attr("height", "100%") // Use 100% height for responsiveness
+        .attr("width", "100%")
+        .attr("height", "100%")
         .attr(
           "viewBox",
           `${minX - padding} ${minY - padding} ${viewBoxWidth} ${viewBoxHeight}`
@@ -65,20 +67,29 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
       console.log("SVG Dimensions:", viewBoxWidth, "x", viewBoxHeight);
       console.log("SVG Element:", svg.node());
 
-      const fill = () => "purple";
+      const fill = () => "rgb(236 72 153)";
 
       svg
         .selectAll<SVGTextElement, CloudWordInput>("text")
         .data(words)
         .enter()
         .append("text")
-        .style("font-size", (d) => `${d.size}px`)
-        .attr("text-anchor", "middle")
+        .style("font-size", "0px")
         .style("fill", fill)
+        .attr("text-anchor", "middle")
+        .attr("transform", (d) => {
+          const initialX = d.x + Math.random() * 200 - 100;
+          const initialY = d.y + Math.random() * 200 - 100;
+          return `translate(${initialX},${initialY})`;
+        })
         .transition()
         .duration(700)
-        .attr("transform", (d) => `translate(${d.x},${d.y})rotate(${d.rotate})`)
-        .text((d) => d.text);
+        .delay((d, i) => i * 30)
+        .attr("transform", (d) => `translate(${d.x},${d.y})`)
+        .text((d) => d.text)
+        .attr("class", "opacity-0")
+        .style("font-size", (d) => `${d.size}px`)
+        .attr("class", "opacity-100");
     }
     return () => {
       // Perform cleanup tasks here
@@ -86,11 +97,7 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
     };
   }, [rawData]);
 
-  return (
-    <div>
-      <svg ref={svgRef}></svg>
-    </div>
-  );
+  return <svg ref={svgRef}></svg>;
 };
 
 export default WordCloud;
