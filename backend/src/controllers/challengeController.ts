@@ -9,7 +9,8 @@ async function getChallengeMarkdown(req: Request, res: Response): Promise<void> 
   try {
     const challengeMarkdownPath = join(
       fileURLToPath(import.meta.url),
-      '../../../../CHALLENGE.md'
+      //'../../../../CHALLENGE.md'
+      '../../../../WORDCLOUD.md'
     );
     const challengeMarkdown = await readFile(challengeMarkdownPath, 'utf8');
     const html = marked(challengeMarkdown);
