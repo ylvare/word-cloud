@@ -4,7 +4,9 @@ import { fileURLToPath } from 'url';
 import { marked } from "marked";
 async function getChallengeMarkdown(req, res) {
     try {
-        const challengeMarkdownPath = join(fileURLToPath(import.meta.url), '../../../../CHALLENGE.md');
+        const challengeMarkdownPath = join(fileURLToPath(import.meta.url), 
+        //'../../../../CHALLENGE.md'
+        '../../../../WORDCLOUD.md');
         const challengeMarkdown = await readFile(challengeMarkdownPath, 'utf8');
         const html = marked(challengeMarkdown);
         res.status(200).send(html);

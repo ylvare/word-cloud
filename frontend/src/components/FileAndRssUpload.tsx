@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 enum UploadOption {
   File,
@@ -17,14 +18,31 @@ const FileAndRssUpload: React.FC = () => {
     setFile(uploadedFile);
   };
 
-  const handleSubmit = () => {
-    // Handle submission based on the selected option
-    if (uploadOption === UploadOption.File) {
-      // Do something with the file
-      console.log("File uploaded:", file);
-    } else {
-      // Do something with the entered RSS URL
-      console.log("RSS URL entered:", rssUrl);
+  const handleSubmit = async () => {
+    try {
+      if (uploadOption === UploadOption.File && file) {
+        const content = await file.text();
+
+        // Create an object with a 'content' field to match the server's expectation
+        const requestBody = { content };
+
+        const response = await axios.post("/api/textfile", requestBody, {
+          headers: {
+            "Content-Type": "application/json", // Set Content-Type to JSON
+          },
+        });
+
+        if (response.status === 200) {
+          console.log("File uploaded successfully");
+        } else {
+          console.error("Failed to upload file");
+        }
+      } else if (uploadOption === UploadOption.RSS && rssUrl) {
+        // Handle RSS URL submission
+        console.log("RSS URL entered:", rssUrl);
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
     }
   };
 
@@ -33,7 +51,7 @@ const FileAndRssUpload: React.FC = () => {
       <div className="flex flex-col justify-between lg:col-span-1">
         <label className="text-sm text-gray-600">Upload Type:</label>
         <select
-          className="border rounded w-full h-full bg-slate-50"
+          className="border rounded w-full h-full"
           onChange={(e) =>
             setUploadOption(Number(e.target.value) as UploadOption)
           }
@@ -45,7 +63,7 @@ const FileAndRssUpload: React.FC = () => {
       </div>
 
       <div
-        className={`flex flex-col justify-between lg:col-span-2 h-[52px] overflow-auto`}
+        className={`flex flex-col justify-between lg:col-span-2 h-[55px] overflow-auto`}
       >
         {uploadOption === UploadOption.File && (
           <>
@@ -53,7 +71,7 @@ const FileAndRssUpload: React.FC = () => {
               Upload Text File:
             </label>
             <input
-              className="border rounded w-full"
+              className="border rounded w-full h-full"
               type="file"
               id="fileInput"
               accept=".txt"
@@ -68,7 +86,7 @@ const FileAndRssUpload: React.FC = () => {
               Enter RSS Stream:
             </label>
             <input
-              className="border rounded w-full"
+              className="border rounded w-full h-full"
               type="text"
               id="rssInput"
               placeholder="Enter RSS URL"

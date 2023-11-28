@@ -1,4 +1,4 @@
-﻿CV -Ylva Rehnberg   
+CV -Ylva Rehnberg   
 Ylva är en apputvecklare med flerårig erfarenhet av ramverket React Native 
 och JavaScript. I två år arbetade Ylva på en digitalbyrå med främsta 
 ansvarsområde att bygga upp mobilvyer efter UX design i Figma. Under sitt 

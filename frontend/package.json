@@ -15,6 +15,7 @@
     "@types/d3": "^7.4.3",
     "@types/d3-cloud": "^1.2.9",
     "autoprefixer": "^10.4.16",
+    "axios": "^1.6.2",
     "d3": "^7.8.5",
     "d3-cloud": "^1.2.7",
     "dependency-graph": "^0.11.0",

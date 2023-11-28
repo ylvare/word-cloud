@@ -11,8 +11,8 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.use('/api/textfile/', textFileRoute)
-app.use('/api/challenge/', challengeRoute)
-app.use('/api/', rssRoutes)
+app.use(express.json()); 
+app.use('/', textFileRoute)
+app.use('/', rssRoutes)
 
 export default app;

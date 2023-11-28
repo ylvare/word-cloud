@@ -2,6 +2,6 @@
 import express from 'express';
 import { getTextFileContent, uploadTextFile } from '../controllers/textFileController.js';
 const router = express.Router();
-router.get('/', getTextFileContent);
-router.post('/', uploadTextFile);
+router.get('/api/textfile/', getTextFileContent);
+router.post('/api/textfile/', uploadTextFile);
 export default router;
