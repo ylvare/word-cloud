@@ -48,21 +48,26 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
       const maxX = d3.max(words, (d) => d.x);
       const maxY = d3.max(words, (d) => d.y);
 
-      const svgWidth = maxX - minX + 30;
-      const svgHeight = maxY - minY + 30;
+      const padding = 20;
+      const viewBoxWidth = maxX - minX + 2 * padding;
+      const viewBoxHeight = maxY - minY + 2 * padding;
 
       const svg = d3
         .select<SVGSVGElement, unknown>(svgRef.current!)
-        .attr("width", svgWidth)
-        .attr("height", svgHeight);
-      console.log(words);
+        .attr("width", "100%") // Use 100% width for responsiveness
+        .attr("height", "100%") // Use 100% height for responsiveness
+        .attr(
+          "viewBox",
+          `${minX - padding} ${minY - padding} ${viewBoxWidth} ${viewBoxHeight}`
+        );
 
-      console.log("SVG Dimensions:", svgWidth, "x", svgHeight);
+      console.log(words);
+      console.log("SVG Dimensions:", viewBoxWidth, "x", viewBoxHeight);
       console.log("SVG Element:", svg.node());
 
       const fill = () => "purple";
 
-      const text = svg
+      svg
         .selectAll<SVGTextElement, CloudWordInput>("text")
         .data(words)
         .enter()
@@ -70,21 +75,9 @@ const WordCloud: React.FC<WordCloudProps> = ({ rawData }) => {
         .style("font-size", (d) => `${d.size}px`)
         .attr("text-anchor", "middle")
         .style("fill", fill)
-        .attr(
-          "transform",
-          (d) =>
-            `translate(${svgWidth / 2},${svgHeight / 2})rotate(${d.rotate})`
-        )
         .transition()
-        .duration(700);
-      text
-        .attr(
-          "transform",
-          (d) =>
-            `translate(${d.x - minX + 20},${d.y - minY + 20})rotate(${
-              d.rotate
-            })`
-        )
+        .duration(700)
+        .attr("transform", (d) => `translate(${d.x},${d.y})rotate(${d.rotate})`)
         .text((d) => d.text);
     }
     return () => {
