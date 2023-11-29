@@ -3,11 +3,12 @@
   "name": "backend",
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://github.com/ylvare/word-cloud/",  "scripts": {
+  "homepage": "https://github.com/ylvare/word-cloud/backend/",  
+  "scripts": {
     "dev": "nodemon --ext ts --watch src --exec 'node --no-warnings=ExperimentalWarning --loader ts-node/esm ./src/main.ts'",
     "type-check": "tsc",
     "build": "tsc --outDir build",
-    "start": "node build/server.js",
+    "start": "node build/app.js",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d dist"
   },
