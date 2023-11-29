@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import WordCloud from "./components/WordCloud";
 import FileAndRssUpload from "./components/FileAndRssUpload";
 import { CloudWordInput } from "../../interfaces/interfaces.js";

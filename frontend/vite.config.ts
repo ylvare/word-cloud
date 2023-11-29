@@ -6,7 +6,7 @@ export default defineConfig({
   base: "/word-cloud/",
   server: {
     proxy: {
-      //"/api": { target: { port: 3000, host: "localhost" } },
+      //"/api": { target: { port: 3000, host: "localhost" } }
       '/api': { target: 'https://word-cloud-mvnj.onrender.com/', changeOrigin: true }},
   },
 });
