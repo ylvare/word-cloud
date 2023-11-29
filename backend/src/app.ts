@@ -10,6 +10,13 @@ import { isPromise } from "util/types";
 const app = express();
 app.use(cors());
 
+// Enable CORS for a specific origin
+app.use(cors({
+  origin: 'https://ylvare.github.io/',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
+
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
