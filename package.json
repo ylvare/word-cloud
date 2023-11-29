@@ -6,6 +6,9 @@
   ],
   "scripts": {
     "dev": "concurrently npm:{frontend,backend}",
+    "predeploy": "concurrently npm:{frontend,backend}",
+    "deploy": "concurrently npm:{frontend,backend}",
+    "build": "concurrently npm:{frontend,backend}",
     "frontend": "yarn workspace frontend dev",
     "backend": "yarn workspace backend dev",
     "type-check": "yarn workspaces run type-check"
