@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { CloudWordInput } from "../../../interfaces/interfaces.js";
 import axios from "axios";
 
+axios.defaults.baseURL = "https://word-cloud-mvnj.onrender.com";
+
 enum UploadOption {
   File,
   RSS,
