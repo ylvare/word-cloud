@@ -1,4 +1,4 @@
-name: Deploy static content to Pages
+name: Deploy word cloud frontend
 
 on:
   push:
@@ -27,19 +27,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
+          cache: 'yarn'  # Use yarn as the package manager
       - name: Install dependencies
-        working-directory: ./frontend/  # Set working directory to /frontend/
-        run: npm install
+        working-directory: ./frontend/
+        run: yarn install  # Use yarn instead of npm
       - name: Build
-        working-directory: ./frontend/  # Set working directory to /frontend/
-        run: npm run build
+        working-directory: ./frontend/
+        run: yarn build  # Use yarn instead of npm
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './frontend/dist'  # Update the path to the frontend's dist directory
+          path: './frontend/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+
