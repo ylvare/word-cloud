@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": { target: { port: 3000, host: "localhost" } },
+      //'/api': { target: 'http://your-production-api.com', changeOrigin: true },
     },
   },
 });

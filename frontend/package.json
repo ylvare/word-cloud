@@ -3,20 +3,24 @@
   "name": "frontend",
   "version": "0.1.0",
   "type": "module",
+  "homepage": "https://github.com/ylvare/word-cloud/frontend/",  
   "devDependencies": {
     "@types/lodash": "^4.14.202",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^4.0.4",
+    "gh-pages": "^6.1.0",
     "postcss-cli": "^10.1.0",
     "typescript": "^5.2.2",
     "vite": "^4.4.9"
   },
   "dependencies": {
+    "@types/cors": "^2.8.17",
     "@types/d3": "^7.4.3",
     "@types/d3-cloud": "^1.2.9",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
+    "cors": "^2.8.5",
     "d3": "^7.8.5",
     "d3-cloud": "^1.2.7",
     "dependency-graph": "^0.11.0",
@@ -34,9 +38,11 @@
   },
   "scripts": {
     "dev": "vite",
+    "build": "vite build && yarn build:css",
     "type-check": "tsc",
     "build:css": "postcss src/styles/tailwind.css -o public/styles/tailwind.css",
     "watch:css": "postcss src/styles/tailwind.css -o public/styles/tailwind.css --watch",
-    "build": "yarn build:css"
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d dist"
   }
 }
