@@ -5,58 +5,62 @@ import { ParsedQs } from 'qs';
 import { join } from 'path';
 import fs from 'fs';
 import { generateCloudData } from '../utils/cloudData.js';
+import {  RawWordData } from "../../../interfaces/interfaces.js";
 
-export interface RawWordData {
-  word: string;
-  frequency: number;
-}
 
 export interface CloudWord {
   text: string;
   size: number;
 }
 
-export const generateCloudDataController = (req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response) => {
+export const generateCloudDataController = async (req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response) => {
   try {
     const dataSource: string = req.query.dataSource as string || 'textfile';
 
     if (!dataSource) {
-      res.status(400).send("Missing 'filename' parameter");
-      return;
+      return res.status(400).send("Missing 'dataSource' parameter");
     }
 
     let rawData: RawWordData[];
     let cloudData: CloudWord[];
 
-    if (dataSource === 'textfile') {
-      console.log("in data source textfile")
-      const filePath = join(process.cwd(), 'src/textfiles', 'inputTextFile.txt');
-      rawData = readRawDataFromTextFile(filePath);
-      cloudData= generateCloudData(rawData);
-      res.json({ cloudData });
-    } else if (dataSource === 'rss') {
-      const filePath = join(process.cwd(), 'src/textfiles', 'rss-feed.xml');
-      rawData = readRawDataFromRssFile(filePath);
-      cloudData= generateCloudData(rawData);
-      console.log(cloudData)
-      res.json({ cloudData });
-    } else {
-      res.status(400).json({ error: 'Invalid data source specified' });
-      return;
+    const filePath = getFilePath(dataSource);
+
+    if (!filePath) {
+      return res.status(400).json({ error: 'Invalid data source specified' });
     }
 
-    
+    if (dataSource === 'rss') {
+      rawData = readRawDataFromRssFile(filePath);
+    } else {
+      rawData = readRawDataFromFile(filePath);
+    }
 
+    cloudData = generateCloudData(rawData);
+    res.json({ cloudData });
   } catch (error) {
     console.error('Error generating cloud data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-function readRawDataFromTextFile(filePath: string): RawWordData[] {
+function getFilePath(dataSource: string): string | null {
+  const baseDir = join(process.cwd(), 'src/textfiles');
+  const filePaths: { [key: string]: string } = {
+    textfile: join(baseDir, 'inputTextFile.txt'),
+    rss: join(baseDir, 'rss-feed.xml'),
+  };
+
+  return filePaths[dataSource] || null;
+}
+
+function readRawDataFromFile(filePath: string, cleanRegex?: RegExp): RawWordData[] {
   try {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
-    const words = fileContent.split(/\s+/);
+
+    const contentToProcess = cleanRegex ? cleanHtmlTags(fileContent, cleanRegex) : fileContent;
+
+    const words = contentToProcess.split(/\s+/);
 
     const wordCounts: Record<string, number> = {};
 
@@ -67,57 +71,39 @@ function readRawDataFromTextFile(filePath: string): RawWordData[] {
         wordCounts[word] = 1;
       }
     }
-  
-    const wordOccurrences: RawWordData[] = [];
-    for (const word in wordCounts) {
-      wordOccurrences.push({ word, frequency: wordCounts[word] });
-    }
-  
+
+    const wordOccurrences: RawWordData[] = Object.entries(wordCounts).map(([word, frequency]) => ({ word, frequency }));
+
     return wordOccurrences;
   } catch (error) {
     console.error('Error reading raw data from file:', error);
-    throw error; 
+    throw error;
   }
+}
+
+function cleanHtmlTags(content: string, regex: RegExp): string {
+  return content.replace(regex, '');
 }
 
 function readRawDataFromRssFile(filePath: string): RawWordData[] {
   try {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
-
     const data = JSON.parse(fileContent);
 
-    let allContent: string = "";
-    
+    let allContent = '';
+
     data.items.forEach((item: any) => {
       if (item.content) {
         allContent += item.content;
       }
     });
 
-    const clean = /<\/?[^>]+(>|$)/g;
-    const filteredContent = allContent.replace(clean, '');
+    const cleanHtmlTagsRegex = /<[^>]+>/g;
 
-    const words = filteredContent.split(/\s+/);
-    
-  
-    const wordCounts: Record<string, number> = {};
-
-    for (const word of words) {
-      if (wordCounts[word]) {
-        wordCounts[word]++;
-      } else {
-        wordCounts[word] = 1;
-      }
-    }
-  
-    const wordOccurrences: RawWordData[] = [];
-    for (const word in wordCounts) {
-      wordOccurrences.push({ word, frequency: wordCounts[word] });
-    }
-  
-    return wordOccurrences;
+    return readRawDataFromFile(filePath, cleanHtmlTagsRegex);
   } catch (error) {
-    console.error('Error reading raw data from file:', error);
-    throw error; 
+    console.error('Error reading raw data from RSS file:', error);
+    throw error;
   }
 }
+

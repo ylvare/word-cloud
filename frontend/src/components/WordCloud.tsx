@@ -3,12 +3,8 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import cloud, { Word } from "d3-cloud";
 import "../styles/tailwind.css";
+import { CloudWordInput } from "../../../interfaces/interfaces.js";
 import { generateInputArray } from "../utils/inputArray";
-
-interface CloudWordInput {
-  text: string;
-  size: number;
-}
 
 interface WordCloudProps {
   wordCloudData: CloudWordInput[];

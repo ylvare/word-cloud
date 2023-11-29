@@ -2,12 +2,8 @@
 import React, { useState, useEffect } from "react";
 import WordCloud from "./components/WordCloud";
 import FileAndRssUpload from "./components/FileAndRssUpload";
+import { CloudWordInput } from "../../interfaces/interfaces.js";
 import "./styles/tailwind.css"; // Import the tailwind.css file
-
-interface CloudWordInput {
-  text: string;
-  size: number;
-}
 
 const App: React.FC = () => {
   const [wordCloudData, setWordCloudData] = useState<CloudWordInput[]>([]);

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { CloudWordInput } from "../../../interfaces/interfaces.js";
 import axios from "axios";
 
 enum UploadOption {
@@ -6,31 +7,9 @@ enum UploadOption {
   RSS,
 }
 
-interface CloudWordInput {
-  text: string;
-  size: number;
-}
-
 interface FileAndRssUploadProps {
   onUploadSuccess: (newData: CloudWordInput[]) => void;
 }
-
-const getCloudData = async (
-  onUploadSuccess: (arg0: any) => void,
-  uploadOption: UploadOption
-) => {
-  const dataSource = uploadOption === 0 ? "textfile" : "rss";
-  console.log("uploadOption", uploadOption);
-  const cloudDataResponse = await axios.get(
-    `/api/clouddata?dataSource=${dataSource}`
-  );
-  //const cloudDataResponse = await axios.get("/api/clouddata/");
-  if (cloudDataResponse.status === 200) {
-    onUploadSuccess(cloudDataResponse.data.cloudData);
-  } else {
-    console.error("Failed to retrieve updated word cloud data");
-  }
-};
 
 const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
   onUploadSuccess,
@@ -46,9 +25,9 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
     setFile(uploadedFile);
   };
 
-  const handleSubmit = async () => {
+  const handleFileSubmit = async () => {
     try {
-      if (uploadOption === UploadOption.File && file) {
+      if (file) {
         const content = await file.text();
         const requestBody = { content };
         const response = await axios.post("/api/textfile", requestBody, {
@@ -57,26 +36,62 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
           },
         });
 
-        if (response.status === 200) {
-          getCloudData(onUploadSuccess, uploadOption);
-          console.log("File uploaded successfully");
-        } else {
-          console.error("Failed to get cloud data");
-        }
-      } else if (uploadOption === UploadOption.RSS && rssUrl) {
-        // Handle RSS URL submission
-        console.log("RSS URL entered:", rssUrl);
-        await axios
-          .get("api/rss-feed/?rssFeedUrl=" + rssUrl)
-          .then((response) => {
-            if (response.status === 200) {
-              getCloudData(onUploadSuccess, uploadOption);
-              console.log("File uploaded successfully");
-            } else console.error("Failed to get cloud data");
-          });
+        handleApiResponse(response);
+      }
+    } catch (error) {
+      console.error("Failed to submit file", error);
+    }
+  };
+
+  const handleRssSubmit = async () => {
+    try {
+      if (rssUrl) {
+        const response = await axios.get(`/api/rss-feed/?rssFeedUrl=${rssUrl}`);
+        handleApiResponse(response);
+      }
+    } catch (error) {
+      console.error("Failed to submit RSS", error);
+    }
+  };
+
+  const handleApiResponse = (response: any) => {
+    if (response.status === 200) {
+      getCloudData(onUploadSuccess);
+      console.log("File uploaded successfully");
+    } else {
+      console.error("Failed to get cloud data");
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (uploadOption === UploadOption.File) {
+        await handleFileSubmit();
+      } else if (uploadOption === UploadOption.RSS) {
+        await handleRssSubmit();
       }
     } catch (error) {
       console.error("Failed to submit", error);
+    }
+  };
+
+  const getDataSource = (): string =>
+    uploadOption === UploadOption.File ? "textfile" : "rss";
+
+  const getCloudData = async (onUploadSuccess: (arg0: any) => void) => {
+    try {
+      const dataSource = getDataSource();
+      const cloudDataResponse = await axios.get(
+        `/api/clouddata?dataSource=${dataSource}`
+      );
+
+      if (cloudDataResponse.status === 200) {
+        onUploadSuccess(cloudDataResponse.data.cloudData);
+      } else {
+        console.error("Failed to retrieve updated word cloud data");
+      }
+    } catch (error) {
+      console.error("Error generating cloud data:", error);
     }
   };
 
