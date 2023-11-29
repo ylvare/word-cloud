@@ -19,7 +19,7 @@ const getCloudData = async (
   onUploadSuccess: (arg0: any) => void,
   uploadOption: UploadOption
 ) => {
-  const dataSource = uploadOption === 0 ? "textfile" : "rss-feed";
+  const dataSource = uploadOption === 0 ? "textfile" : "rss";
   console.log("uploadOption", uploadOption);
   const cloudDataResponse = await axios.get(
     `/api/clouddata?dataSource=${dataSource}`
@@ -61,14 +61,22 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
           getCloudData(onUploadSuccess, uploadOption);
           console.log("File uploaded successfully");
         } else {
-          console.error("Failed to upload file");
+          console.error("Failed to get cloud data");
         }
       } else if (uploadOption === UploadOption.RSS && rssUrl) {
         // Handle RSS URL submission
         console.log("RSS URL entered:", rssUrl);
+        await axios
+          .get("api/rss-feed/?rssFeedUrl=" + rssUrl)
+          .then((response) => {
+            if (response.status === 200) {
+              getCloudData(onUploadSuccess, uploadOption);
+              console.log("File uploaded successfully");
+            } else console.error("Failed to get cloud data");
+          });
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Failed to submit", error);
     }
   };
 

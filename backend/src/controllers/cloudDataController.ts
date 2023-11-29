@@ -24,7 +24,6 @@ export const generateCloudDataController = (req: Request<ParamsDictionary, any, 
       res.status(400).send("Missing 'filename' parameter");
       return;
     }
-    console.log("dataSource", dataSource)
 
     let rawData: RawWordData[];
     let cloudData: CloudWord[];
@@ -36,9 +35,11 @@ export const generateCloudDataController = (req: Request<ParamsDictionary, any, 
       cloudData= generateCloudData(rawData);
       res.json({ cloudData });
     } else if (dataSource === 'rss') {
-      // Add logic to read data from RSS here
-      // Example: const rssData = readRssData();
-      // rawData = processRssData(rssData);
+      const filePath = join(process.cwd(), 'src/textfiles', 'rss-feed.xml');
+      rawData = readRawDataFromRssFile(filePath);
+      cloudData= generateCloudData(rawData);
+      console.log(cloudData)
+      res.json({ cloudData });
     } else {
       res.status(400).json({ error: 'Invalid data source specified' });
       return;
@@ -57,6 +58,48 @@ function readRawDataFromTextFile(filePath: string): RawWordData[] {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const words = fileContent.split(/\s+/);
 
+    const wordCounts: Record<string, number> = {};
+
+    for (const word of words) {
+      if (wordCounts[word]) {
+        wordCounts[word]++;
+      } else {
+        wordCounts[word] = 1;
+      }
+    }
+  
+    const wordOccurrences: RawWordData[] = [];
+    for (const word in wordCounts) {
+      wordOccurrences.push({ word, frequency: wordCounts[word] });
+    }
+  
+    return wordOccurrences;
+  } catch (error) {
+    console.error('Error reading raw data from file:', error);
+    throw error; 
+  }
+}
+
+function readRawDataFromRssFile(filePath: string): RawWordData[] {
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+
+    const data = JSON.parse(fileContent);
+
+    let allContent: string = "";
+    
+    data.items.forEach((item: any) => {
+      if (item.content) {
+        allContent += item.content;
+      }
+    });
+
+    const clean = /<\/?[^>]+(>|$)/g;
+    const filteredContent = allContent.replace(clean, '');
+
+    const words = filteredContent.split(/\s+/);
+    
+  
     const wordCounts: Record<string, number> = {};
 
     for (const word of words) {
