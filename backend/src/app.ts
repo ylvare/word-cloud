@@ -8,13 +8,12 @@ import { isPromise } from "util/types";
 //https://github.com/TypeStrong/ts-node/discussions/1781
 
 const app = express();
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-
-app.use(cors());
 app.use(express.json()); 
 app.use('/', cloudDataRoute)
 app.use('/', textFileRoute)
