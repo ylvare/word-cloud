@@ -15,6 +15,23 @@ interface FileAndRssUploadProps {
   onUploadSuccess: (newData: CloudWordInput[]) => void;
 }
 
+const getCloudData = async (
+  onUploadSuccess: (arg0: any) => void,
+  uploadOption: UploadOption
+) => {
+  const dataSource = uploadOption === 0 ? "textfile" : "rss-feed";
+  console.log("uploadOption", uploadOption);
+  const cloudDataResponse = await axios.get(
+    `/api/clouddata?dataSource=${dataSource}`
+  );
+  //const cloudDataResponse = await axios.get("/api/clouddata/");
+  if (cloudDataResponse.status === 200) {
+    onUploadSuccess(cloudDataResponse.data.cloudData);
+  } else {
+    console.error("Failed to retrieve updated word cloud data");
+  }
+};
+
 const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
   onUploadSuccess,
 }) => {
@@ -33,23 +50,16 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
     try {
       if (uploadOption === UploadOption.File && file) {
         const content = await file.text();
-
         const requestBody = { content };
-
         const response = await axios.post("/api/textfile", requestBody, {
           headers: {
-            "Content-Type": "application/json", // Set Content-Type to JSON
+            "Content-Type": "application/json",
           },
         });
 
         if (response.status === 200) {
+          getCloudData(onUploadSuccess, uploadOption);
           console.log("File uploaded successfully");
-          const cloudDataResponse = await axios.get("/api/clouddata");
-          if (cloudDataResponse.status === 200) {
-            onUploadSuccess(cloudDataResponse.data.cloudData);
-          } else {
-            console.error("Failed to retrieve updated word cloud data");
-          }
         } else {
           console.error("Failed to upload file");
         }

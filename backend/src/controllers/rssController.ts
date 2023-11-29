@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { writeFile } from 'fs/promises';
 import { fetchRssFeed } from '../services/rssService.js';
+import { join } from 'path';
 
 async function getPostsFromRssFeedUrl(req: Request, res: Response): Promise<void> {
   try {
@@ -11,8 +13,15 @@ async function getPostsFromRssFeedUrl(req: Request, res: Response): Promise<void
     }
 
     const rssFeed = await fetchRssFeed(rssFeedUrl);
-    // Process and send the RSS feed data as a response
-    res.json(rssFeed);
+    const filePath = join(process.cwd(), 'src/textfiles', 'rss-feed.xml');
+    const rssFeedString = JSON.stringify(rssFeed);
+
+    // Save the RSS feed to a file
+    await writeFile(filePath, rssFeedString);
+
+    console.log('RSS feed saved to file:', filePath);
+    res.json({ message: 'RSS feed saved to file' });
+
   } catch (error) {
     // Handle errors
     console.error(error);

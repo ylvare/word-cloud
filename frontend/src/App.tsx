@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import WordCloud from "./components/WordCloud";
 import FileAndRssUpload from "./components/FileAndRssUpload";
 import "./styles/tailwind.css"; // Import the tailwind.css file
-import { generateInputArray } from "./utils/inputArray";
 
 interface CloudWordInput {
   text: string;

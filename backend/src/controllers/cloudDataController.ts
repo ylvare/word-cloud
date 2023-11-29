@@ -18,17 +18,41 @@ export interface CloudWord {
 
 export const generateCloudDataController = (req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>, res: Response) => {
   try {
-    const filePath = join(process.cwd(), 'src/textfiles', "inputTextFile.txt");
-    const rawData: RawWordData[] = readRawDataFromFile(filePath);
-    const cloudData: CloudWord[] = generateCloudData(rawData);
-    res.json({ cloudData });
+    const dataSource: string = req.query.dataSource as string || 'textfile';
+
+    if (!dataSource) {
+      res.status(400).send("Missing 'filename' parameter");
+      return;
+    }
+    console.log("dataSource", dataSource)
+
+    let rawData: RawWordData[];
+    let cloudData: CloudWord[];
+
+    if (dataSource === 'textfile') {
+      console.log("in data source textfile")
+      const filePath = join(process.cwd(), 'src/textfiles', 'inputTextFile.txt');
+      rawData = readRawDataFromTextFile(filePath);
+      cloudData= generateCloudData(rawData);
+      res.json({ cloudData });
+    } else if (dataSource === 'rss') {
+      // Add logic to read data from RSS here
+      // Example: const rssData = readRssData();
+      // rawData = processRssData(rssData);
+    } else {
+      res.status(400).json({ error: 'Invalid data source specified' });
+      return;
+    }
+
+    
+
   } catch (error) {
     console.error('Error generating cloud data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-function readRawDataFromFile(filePath: string): RawWordData[] {
+function readRawDataFromTextFile(filePath: string): RawWordData[] {
   try {
     const fileContent = fs.readFileSync(filePath, 'utf-8');
     const words = fileContent.split(/\s+/);
