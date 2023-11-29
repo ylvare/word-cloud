@@ -62,10 +62,6 @@ const WordCloud: React.FC<WordCloudProps> = ({ wordCloudData }) => {
           `${minX - padding} ${minY - padding} ${viewBoxWidth} ${viewBoxHeight}`
         );
 
-      console.log(words);
-      console.log("SVG Dimensions:", viewBoxWidth, "x", viewBoxHeight);
-      console.log("SVG Element:", svg.node());
-
       const fill = () => "rgb(236 72 153)";
 
       svg

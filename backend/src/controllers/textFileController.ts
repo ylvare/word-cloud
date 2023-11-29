@@ -22,7 +22,6 @@ async function getTextFileContent(req: Request, res: Response): Promise<void> {
 
 async function uploadTextFile(req: Request, res: Response): Promise<void> {
     try {
-      console.log("req.body", req.body)
       const { content } = req.body;
       if (!content) {
         res.status(400).send('Missing file data');
