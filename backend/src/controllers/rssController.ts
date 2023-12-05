@@ -16,14 +16,12 @@ async function getPostsFromRssFeedUrl(req: Request, res: Response): Promise<void
     const filePath = join(process.cwd(), 'src/textfiles', 'rss-feed.xml');
     const rssFeedString = JSON.stringify(rssFeed);
 
-    // Save the RSS feed to a file
     await writeFile(filePath, rssFeedString);
 
     console.log('RSS feed saved to file:', filePath);
     res.json({ message: 'RSS feed saved to file' });
 
   } catch (error) {
-    // Handle errors
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
