@@ -13,7 +13,7 @@ proxy: {
 
 Deployed page: https://ylvare.github.io/word-cloud/
 
-Please note that first request to server will take about 30 seconds due to that I use a free plan on Render and the server goes to sleep every 15 minutes. And to “wake” them up again it takes about 30 seconds.
+Please note that the first request to the server will take up to 60 seconds due to the app using a free plan on Render. (The server goes to sleep every 15 minutes and to “wake” it up again takes time.)
 
 "Render spins down a Free web service that goes 15 minutes without receiving inbound traffic. Render spins the service back up whenever it next receives a request to process. Spinning up a service takes a few seconds, which causes a noticeable delay for incoming requests until the service is back up and running. For example, a browser page load will hang momentarily."
 
