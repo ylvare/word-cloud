@@ -5,6 +5,7 @@ import FileAndRssUpload from "./components/FileAndRssUpload";
 import { CloudWordInput } from "../../interfaces/interfaces.js";
 import CountDown from "./components/CountDown.js";
 import "./styles/tailwind.css"; // Import the tailwind.css file
+import { set } from "lodash";
 
 const App: React.FC = () => {
   const [wordCloudData, setWordCloudData] = useState<CloudWordInput[]>([]);
@@ -13,6 +14,7 @@ const App: React.FC = () => {
 
   const handleUploadSuccess = (newData: CloudWordInput[]) => {
     setWordCloudData(newData);
+    setLoading(false);
     setInitialCall(false);
   };
 

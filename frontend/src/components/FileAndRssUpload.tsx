@@ -81,8 +81,6 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
       }
     } catch (error) {
       console.error("Failed to submit", error);
-    } finally {
-      setLoading(false); // Ensure to set loading to false after the operation is complete or encounters an error
     }
   };
 
