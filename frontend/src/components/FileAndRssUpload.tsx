@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CloudWordInput } from "../../../interfaces/interfaces.js";
 import axios from "axios";
+import { set } from "lodash";
 
 axios.defaults.baseURL = "https://word-cloud-mvnj.onrender.com";
 
@@ -11,10 +12,12 @@ enum UploadOption {
 
 interface FileAndRssUploadProps {
   onUploadSuccess: (newData: CloudWordInput[]) => void;
+  setLoading: (loading: boolean) => void;
 }
 
 const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
   onUploadSuccess,
+  setLoading,
 }) => {
   const [uploadOption, setUploadOption] = useState<UploadOption>(
     UploadOption.File
@@ -65,8 +68,12 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    setLoading: (loading: boolean) => void
+  ) => {
     try {
+      setLoading(true);
       if (uploadOption === UploadOption.File) {
         await handleFileSubmit();
       } else if (uploadOption === UploadOption.RSS) {
@@ -74,6 +81,8 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
       }
     } catch (error) {
       console.error("Failed to submit", error);
+    } finally {
+      setLoading(false); // Ensure to set loading to false after the operation is complete or encounters an error
     }
   };
 
@@ -151,7 +160,7 @@ const FileAndRssUpload: React.FC<FileAndRssUploadProps> = ({
       <div className="flex flex-col space-y-2 justify-end md:col-span-2 lg:col-span-1">
         <button
           className="px-4 py-1 bg-pink-500 text-white rounded"
-          onClick={handleSubmit}
+          onClick={(event) => handleSubmit(event, setLoading)}
         >
           Submit
         </button>
