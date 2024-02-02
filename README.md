@@ -1,6 +1,8 @@
-[Ylva-Rehnberg_CV.txt](https://github.com/ylvare/word-cloud/files/14140019/Ylva-Rehnberg_CV.txt)# word-cloud
+word-cloud
 
 word cloud in node.js, react, TypeScript using d3-cloud to calculate cloud layout
+
+Test .txt file: [Ylva-Rehnberg_CV.txt](https://github.com/ylvare/word-cloud/files/14140019/Ylva-Rehnberg_CV.txt)# 
 
 To change to development enviroment:
 
